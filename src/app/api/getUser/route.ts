@@ -1,7 +1,6 @@
 import { currentUser } from "@clerk/nextjs/server";
-import { NextRequest } from "next/server";
 
-export async function GET(req: NextRequest) {
+export async function GET() {
   try {
     const user = await currentUser();
     const userId = user?.id;

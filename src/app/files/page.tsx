@@ -8,10 +8,6 @@ export default async function Page() {
   // Get the authenticated user's information
   const user = await currentUser();
 
-  const imageLoader = ({ src }: { src: string }) => {
-    return src; // Bypasses Next.js image optimization
-  };
-
   // Extract the userId
   const userId = user?.id;
 

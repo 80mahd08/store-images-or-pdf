@@ -3,6 +3,7 @@
 import { useState } from "react";
 import Dropzone from "react-dropzone";
 import { useEdgeStore } from "@/lib/edgestore"; // Import the EdgeStore client
+import Swal from "sweetalert2"; // Import SweetAlert2
 
 export default function Home() {
   const [files, setFiles] = useState<File[] | null>(null);
@@ -11,7 +12,12 @@ export default function Home() {
 
   const handleSubmit = async () => {
     if (!files || files.length === 0) {
-      alert("Please select at least one file first!");
+      Swal.fire({
+        title: "No Files Selected",
+        text: "Please select at least one file first!",
+        icon: "warning",
+        confirmButtonText: "OK",
+      });
       return;
     }
 
@@ -51,9 +57,19 @@ export default function Home() {
       }
       setProgress(0);
       setFiles(null);
-      alert("Files uploaded and stored successfully!");
+      Swal.fire({
+        title: "Success",
+        text: "Files uploaded and stored successfully!",
+        icon: "success",
+        confirmButtonText: "OK",
+      });
     } catch (error) {
-      alert("Failed to upload or store files.");
+      Swal.fire({
+        title: "Error",
+        text: "Failed to upload or store files.",
+        icon: "error",
+        confirmButtonText: "OK",
+      });
     }
   };
 

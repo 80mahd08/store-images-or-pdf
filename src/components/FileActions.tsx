@@ -1,5 +1,8 @@
 "use client"; // Mark this as a Client Component
 
+import Swal from "sweetalert2";
+import { useEdgeStore } from "@/lib/edgestore"; // Import the EdgeStore client
+
 export default function FileActions({
   url,
   name,
@@ -7,6 +10,8 @@ export default function FileActions({
   url: string;
   name: string;
 }) {
+  const { edgestore } = useEdgeStore(); // Initialize the EdgeStore client
+
   // Function to handle file download
   const handleDownload = () => {
     const link = document.createElement("a");
@@ -19,19 +24,44 @@ export default function FileActions({
 
   // Function to handle file deletion
   const handleDelete = async () => {
-    // Implement your delete logic here
-    console.log("Delete file:", url);
-    // Example: Send a request to delete the file from the server
-    // await fetch(`http://localhost:3000/api/deleteFile`, {
-    //   method: "DELETE",
-    //   headers: {
-    //     "Content-Type": "application/json",
-    //   },
-    //   body: JSON.stringify({ url }),
-    // });
-    alert("Delete functionality to be implemented.");
-  };
+    const result = await Swal.fire({
+      title: "Are you sure?",
+      text: "You won't be able to revert this!",
+      icon: "warning",
+      showCancelButton: true,
+      confirmButtonColor: "#3085d6",
+      cancelButtonColor: "#d33",
+      confirmButtonText: "Yes, delete it!",
+    });
 
+    if (result.isConfirmed) {
+      try {
+        // Send the deletion request to your backend API to remove the file information from Prisma
+        const prismaResponse = await fetch("/api/deleteFile", {
+          method: "DELETE",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({ url }),
+        });
+
+        if (prismaResponse.ok) {
+          Swal.fire("Deleted!", "Your file has been deleted.", "success");
+          window.location.reload();
+        } else {
+          const errorData = await prismaResponse.json();
+          Swal.fire(
+            "Error!",
+            errorData.error || "Failed to delete file.",
+            "error"
+          );
+        }
+      } catch (error) {
+        console.error("Error during deletion:", error);
+        Swal.fire("Error!", "Failed to delete file.", "error");
+      }
+    }
+  };
   return (
     <div className="file-actions">
       <button className="download-btn" onClick={handleDownload}>

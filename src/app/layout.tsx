@@ -6,6 +6,9 @@ import Footer from "@/components/Footer";
 import { ClerkProvider } from "@clerk/nextjs";
 import UserBtn from "@/components/UserBtn";
 import { EdgeStoreProvider } from "@/lib/edgestore";
+import { Inter } from "next/font/google";
+
+const inter = Inter({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
   title: "Create Next App",
@@ -20,7 +23,7 @@ export default function RootLayout({
   return (
     <ClerkProvider>
       <html lang="en">
-        <body>
+        <body className={inter.className}>
           <Header />
           <UserBtn />
           <EdgeStoreProvider>{children}</EdgeStoreProvider>
